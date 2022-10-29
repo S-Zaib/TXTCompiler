@@ -7,7 +7,7 @@ using namespace std;
 int main()
 {
 	string expression;
-	cout << "Enter Expression: ";
+	cout << "Enter Expressffion: ";
 	getline(cin, expression);
 	string nig = postfixer(expression);
 	string nig2 = prefixer(expression);
