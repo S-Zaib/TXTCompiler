@@ -22,7 +22,7 @@ int main()
 	//read_file(name);
     string img1 = "C:\\Users\\shahz\\Downloads\\A2\\Images\\Img1.png";
     string img2 = "C:\\Users\\shahz\\Downloads\\A2\\Images\\Img2.png";
-    //obj_detection(img1);
-    //obj_detection(img2);
+    obj_detection(img1);
+    obj_detection(img2);
     return 0;
 }
