@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <string>
 using namespace std;
 
 
@@ -208,10 +209,13 @@ string postfixer(string expression)
 	Stack<char> stk;
 	string ans = "";
 	int size = 0;
+	int brkt_count = 0;
 	while (expression[size] != '\0')
 	{
 		if (expression[size] != ' ')
 		{
+			if (expression[size] == '(')
+				brkt_count++;
 			if (!opr_check(expression[size]))
 				ans += expression[size];
 			else
@@ -221,13 +225,18 @@ string postfixer(string expression)
 				if (expression[size] != ')')
 					stk.push(expression[size]);
 				else
+				{
 					stk.pop();
+					brkt_count--;
+				}
 			}
 			while (expression[size + 1] == '\0' && !stk.isEmpty())
 				ans += stk.pop();
 		}
 		size++;
 	}
+	if(brkt_count != 0)
+		return "Invalid Expression!";
 	return ans;
 }
 
@@ -252,7 +261,10 @@ string prefixer(string expression)
 		else if (expression[i] == ')')
 			expression[i] = '('; 
 	}
-	return reverse_str(postfixer(expression));
+	string temp = postfixer(expression);
+	if(temp != "Invalid Expression!")
+		return reverse_str(temp);
+	return temp;
 }
 
 string eval_func(string num1, char opr, string num2)
@@ -296,6 +308,8 @@ string eval_func(string num1, char opr, string num2)
 
 string infixer(string expression)
 {
+	if (expression == "Invalid Expression!")
+		return expression;
 	Stack<string> stk;
 	int size = 0;
 	string ans;
@@ -373,28 +387,30 @@ void read_file(string filename)
 			start = false;
 		if (start)
 		{
-			if(str == "|head|")
-				cout << "HEAD" << endl;
+			if (str == "|head|")
+				head = true;
 			else if (str == "|\\head|")
-				cout << "TAIL" << endl;
+				head = false;
 			else if (str == "|postfix|")
-				cout << "POSTFIX" << endl;
+				postfix = true;
 			else if (str == "|\\postfix|")
-				cout << "TAIL" << endl;
+				postfix = false;
 			else if (str == "|prefix|")
-				cout << "PREFIX" << endl;
+				prefix = true;
 			else if (str == "|\\prefix|")
-				cout << "TAIL" << endl;
+				prefix = false;
 			else if (str == "|infix|")
-				cout << "INFIX" << endl;
+				infix = true;
 			else if (str == "|\\infix|")
-				cout << "TAIL" << endl;
-			else
-			{
-				cout << "POSTFIX: " << postfixer(str) << endl;
-				cout << "PREFIX: " << prefixer(str) << endl;
-				cout << "INFIX: " << infixer(str) << endl;
-			}
+				infix = false;
+			else if (head)
+				cout << str << endl;
+			else if (postfix)
+				cout << postfixer(str) << endl;
+			else if (prefix)
+				cout << prefixer(str) << endl;
+			else if (infix)
+				cout << infixer(str) << endl;
 		}
 	}
 	file.close();
