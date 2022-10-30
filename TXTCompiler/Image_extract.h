@@ -51,45 +51,69 @@ void obj_detection(string name)
 			{
 				imgARR[x][y] = 0;
 				imgARR2[x][y] = 255;
-				if (x + 1 < rows && imgARR[x + 1][y] == 255)
+				if (x + 1 < rows)
 				{
-					q.enqueue(x + 1);
-					q.enqueue(y);
+					if (imgARR[x + 1][y] == 255)
+					{
+						q.enqueue(x + 1);
+						q.enqueue(y);
+					}
 				}
-				if (x - 1 >= 0 && imgARR[x - 1][y] == 255)
+				if (y + 1 < cols)
 				{
-					q.enqueue(x - 1);
-					q.enqueue(y);
+					if (imgARR[x][y + 1] == 255)
+					{
+						q.enqueue(x);
+						q.enqueue(y + 1);
+					}
 				}
-				if (y + 1 < cols && imgARR[x][y + 1] == 255)
+				if (x - 1 >= 0)
 				{
-					q.enqueue(x);
-					q.enqueue(y + 1);
+					if (imgARR[x - 1][y] == 255)
+					{
+						q.enqueue(x - 1);
+						q.enqueue(y);
+					}
 				}
-				if (y - 1 >= 0 && imgARR[x][y - 1] == 255)
+				if (y - 1 >= 0)
 				{
-					q.enqueue(x);
-					q.enqueue(y - 1);
+					if (imgARR[x][y - 1] == 255)
+					{
+						q.enqueue(x);
+						q.enqueue(y - 1);
+					}
 				}
-				if (x + 1 < rows && y + 1 < cols && imgARR[x + 1][y + 1] == 255)
+				if (x + 1 < rows && y + 1 < cols)
 				{
-					q.enqueue(x + 1);
-					q.enqueue(y + 1);
+					if (imgARR[x + 1][y + 1] == 255)
+					{
+						q.enqueue(x + 1);
+						q.enqueue(y + 1);
+					}
 				}
-				if (x + 1 < rows && y - 1 >= 0 && imgARR[x + 1][y - 1] == 255)
+				if (x + 1 < rows && y - 1 >= 0)
 				{
-					q.enqueue(x + 1);
-					q.enqueue(y - 1);
+					if (imgARR[x + 1][y - 1] == 255)
+					{
+						q.enqueue(x + 1);
+						q.enqueue(y - 1);
+					}
 				}
-				if (x - 1 >= 0 && y + 1 < cols && imgARR[x - 1][y + 1] == 255)
+				if (x - 1 >= 0 && y + 1 < cols)
 				{
-					q.enqueue(x - 1);
-					q.enqueue(y + 1);
+					if (imgARR[x - 1][y + 1] == 255)
+					{
+						q.enqueue(x - 1);
+						q.enqueue(y + 1);
+					}
 				}
-				if (x - 1 >= 0 && y - 1 >= 0 && imgARR[x - 1][y - 1] == 255)
+				if (x - 1 >= 0 && y - 1 >= 0)
 				{
-					q.enqueue(x - 1);
-					q.enqueue(y - 1);
+					if (imgARR[x - 1][y - 1] == 255)
+					{
+						q.enqueue(x - 1);
+						q.enqueue(y - 1);
+					}
 				}
 			}
 		}
@@ -133,10 +157,3 @@ void obj_detection(string name)
 	}
 	cout << "\n 1 done \n";
 }
-
-/*
-get starting position
-if found create new arr
-return obj in arr
-rinse repeat
-*/

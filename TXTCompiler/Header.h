@@ -296,7 +296,7 @@ string eval_func(string num1, char opr, string num2)
 		break;
 	default:
 		cout << "Wrong OPERATOR ;/";
-		break;
+		return "";
 	}
 	while (n_ans)
 	{
