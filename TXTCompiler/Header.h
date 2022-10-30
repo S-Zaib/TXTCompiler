@@ -234,7 +234,7 @@ string postfixer(string expression)
 				ans += stk.pop();
 		}
 		size++;
-	}
+	} 
 	if(brkt_count != 0)
 		return "Invalid Expression!";
 	return ans;
