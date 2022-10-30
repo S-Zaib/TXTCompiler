@@ -1,7 +1,10 @@
-#include <iostream>
-#include <string>
 #include "Header.h"
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
+#include "Image_extract.h"
 using namespace std;
+using namespace cv;
 
 
 int main()
@@ -17,5 +20,9 @@ int main()
 	cout << "PRE TO INFIX: " << infixer(nig2) << endl;
 	//string name = "../TXTCompiler/data/Test_files/Test-1.txt";
 	//read_file(name);
-	return 0;
+    string img1 = "C:\\Users\\shahz\\Downloads\\A2\\Images\\Img1.png";
+    string img2 = "C:\\Users\\shahz\\Downloads\\A2\\Images\\Img2.png";
+    obj_detection(img1);
+    obj_detection(img2);
+    return 0;
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <string>
 using namespace std;
 
 
@@ -373,28 +374,30 @@ void read_file(string filename)
 			start = false;
 		if (start)
 		{
-			if(str == "|head|")
-				cout << "HEAD" << endl;
+			if (str == "|head|")
+				head = true;
 			else if (str == "|\\head|")
-				cout << "TAIL" << endl;
+				head = false;
 			else if (str == "|postfix|")
-				cout << "POSTFIX" << endl;
+				postfix = true;
 			else if (str == "|\\postfix|")
-				cout << "TAIL" << endl;
+				postfix = false;
 			else if (str == "|prefix|")
-				cout << "PREFIX" << endl;
+				prefix = true;
 			else if (str == "|\\prefix|")
-				cout << "TAIL" << endl;
+				prefix = false;
 			else if (str == "|infix|")
-				cout << "INFIX" << endl;
+				infix = true;
 			else if (str == "|\\infix|")
-				cout << "TAIL" << endl;
-			else
-			{
-				cout << "POSTFIX: " << postfixer(str) << endl;
-				cout << "PREFIX: " << prefixer(str) << endl;
-				cout << "INFIX: " << infixer(str) << endl;
-			}
+				infix = false;
+			else if (head)
+				cout << str << endl;
+			else if (postfix)
+				cout << postfixer(str) << endl;
+			else if (prefix)
+				cout << prefixer(str) << endl;
+			else if (infix)
+				cout << infixer(str) << endl;
 		}
 	}
 	file.close();
