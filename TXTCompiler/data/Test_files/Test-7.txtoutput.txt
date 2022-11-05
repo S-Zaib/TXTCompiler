@@ -1,0 +1,12 @@
+
+	 	 	 6th File.
+
+Do you remember the questions in our school exams where we evaluated an infix, postfix or prefix expression?The only thing we could wish for then is a computer program that would directly give us the answer on entering the expression as input. Well, guess what?A common question in the coding rounds of interviews is to write a program for “Expression evaluation using Stack”. In this article, we will learn how to solve that question.                The file getting processed and the converted Infix notations are AB+CD/*E-  and -+A*/BC+DCF  and +*mn+-pqr 
+Syntax Error: No Start tag of |pre_exp| found!
+ .One more statement to test your coding skills to handle the character arrya without using any builtin funciton, so show this expression in to Infix form (((A/(B-C))*D)+E)  and (((m*n)+(p-q))+r) .                   To begin with, let us see how infix expression evaluation using stack.  16 .
+
+ So,you said you enjoyed the previous assignment and learned much and more :). Now, tell me the about the number of galxies in the picture.Total galxies in picture are  . 
+
+This is simply a test of your stack management abilities. So, I hope you pass this test as well, so keep going. So now I'm sick of this stuff.  That, I believe, is sufficient.
+
+Syntax Error: No Close tag of |post_exp| found!

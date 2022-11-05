@@ -71,12 +71,35 @@ bool opr_check(char x)
 	return false;
 }
 
+bool signed_exp(string expression)
+{
+	int count = 0, size = 0;
+	for (int i = 0; expression[i] != '\0'; i++)
+	{
+		if (expression[i] == ' ')
+			size++;
+		else
+			break;
+	}
+	for (int i = size; expression[i] != '\0'; i++)
+		if (expression[i] == ' ')
+			count++;
+	for (int i = size; expression[i] != '\0'; i++)
+	{
+		if ((expression[i + 1] != '\0' && expression[i + 1] != ' ' && !opr_check(expression[i + 1])) && (expression[i] == '-' || expression[i] == '+'))
+			if (count > 0)
+				return true;
+	}
+	return false;
+}
+
 string postfixer(string expression)
 {
-	Stack<char> stk;
+	Stack<string> stk;
 	string ans = "";
 	int size = 0;
 	int brkt_count = 0;
+	bool isSigned = signed_exp(expression);
 	string temp_exp = remove_spaces(expression);
 	while (!opr_check(temp_exp[size]) && temp_exp[size] != '\0')
 		size++;
@@ -85,20 +108,33 @@ string postfixer(string expression)
 	size = 0;
 	while (expression[size] != '\0')
 	{
+		string temp_str = "";
 		if (expression[size] != ' ')
 		{
 			if (expression[size] == '(')
 				brkt_count++;
 			if (!opr_check(expression[size]))
 				ans += expression[size];
+			else if (isSigned && (expression[size] == '-' || expression[size] == '+') && expression[size + 1] != ' ' && expression[size + 1] != '\0' && !opr_check(expression[size + 1]))
+			{
+				temp_str += expression[size];
+				size++;
+				temp_str += expression[size];
+				ans += temp_str;
+			}
 			else
 			{
-				while (!stk.isEmpty() && prcd(stk.peek(), expression[size]))
+				while (!stk.isEmpty() && prcd(stk.peek()[0], expression[size]))
 					ans += stk.pop();
 				if (expression[size] != ')')
-					stk.push(expression[size]);
+				{
+					temp_str += expression[size];
+					stk.push(temp_str);
+				}
 				else
 				{
+					if(stk.isEmpty())
+						return "Invalid Expression!";
 					stk.pop();
 					brkt_count--;
 				}
@@ -127,12 +163,13 @@ string reverse_str(string str)
 string prefixer(string expression)
 {
 	int size = 0, count = 0, opr_count = 0;
-	while (opr_check(expression[size]) && expression[size] != '\0')
+	string temp_exp = remove_spaces(expression);
+	while (opr_check(temp_exp[size]) && temp_exp[size] != '\0')
 	{
 		opr_count++;
 		size++;
 	}
-	while (!opr_check(expression[size]) && expression[size] != '\0')
+	while (!opr_check(temp_exp[size]) && temp_exp[size] != '\0')
 	{
 		size++;
 		count++;
@@ -140,7 +177,7 @@ string prefixer(string expression)
 	if (count > 1 && opr_count > 0)
 		return infixer(expression);
 	size = 0;
-	expression = reverse_str(expression);
+	expression = reverse_str(temp_exp);
 	for (int i = 0; expression[i] != '\0'; i++)
 	{
 		if (expression[i] == '(')
@@ -157,12 +194,22 @@ string prefixer(string expression)
 string num_to_str(int n)
 {
 	string ans = "";
+	bool isSigned = false;
+	if (n < 0)
+	{
+		isSigned = true;
+		n *= -1;
+	}
 	while (n)
 	{
 		ans += (n % 10) + '0';
 		n /= 10;
 	}
-	return reverse_str(ans);
+	if (isSigned)
+		ans = '-' + reverse_str(ans);
+	else
+		ans = reverse_str(ans);
+	return ans;
 }
 
 int str_to_num(string str)
@@ -179,10 +226,31 @@ string eval_func(string num1, char opr, string num2)
 	string ans = "";
 	int n_ans;
 	int n1 = 0, n2 = 0;
+	bool isSigned = false;
 	for (int i = 0; num1[i] != '\0'; i++)
-		n1 = n1 * 10 + (num1[i] - '0');
+	{
+		if (num1[i] == '-')
+			isSigned = true;
+		else
+			n1 = n1 * 10 + (num1[i] - '0');
+	}
+	if (isSigned)
+	{
+		n1 *= -1;
+		isSigned = false;
+	}
 	for (int i = 0; num2[i] != '\0'; i++)
-		n2 = n2 * 10 + (num2[i] - '0');
+	{
+		if (num2[i] == '-')
+			isSigned = true;
+		else
+			n2 = n2 * 10 + (num2[i] - '0');
+	}
+	if (isSigned)
+	{
+		n2 *= -1;
+		isSigned = false;
+	}
 	switch (opr)
 	{
 	case '+':
@@ -195,7 +263,10 @@ string eval_func(string num1, char opr, string num2)
 		n_ans = n1 * n2;
 		break;
 	case '/':
-		n_ans = n1 / n2;
+		if (n2 != 0)
+			n_ans = n1 / n2;
+		else
+			return "Infinity, div by 0!";
 		break;
 	case '^':
 	case '$':
@@ -223,8 +294,8 @@ string infixer(string expression)
 	Stack<string> stk;
 	int size = 0, count = 0;
 	string ans;
-	bool prefix = false, eval = eval_or_exp(expression);
-	if (!eval)
+	bool prefix = false, eval = eval_or_exp(expression), isSigned = signed_exp(expression);
+	if (!isSigned)
 		expression = remove_spaces(expression);
 	while (expression[size] != '\0')
 	{
@@ -252,12 +323,12 @@ string infixer(string expression)
 	}
 	size = 0, count = 0;
 	int opr_count = 0;
-	while (opr_check(expression[size]) && expression[size] != '\0')
+	while (expression[size+1] != '\0' && opr_check(expression[size]) && expression[size+1] == ' ')
 	{
 		opr_count++;
 		size++;
 	}
-	while (!opr_check(expression[size]) && expression[size] != '\0')
+	while ((expression[size] != ' ' && !opr_check(expression[size])) || (expression[size + 1] != '\0' && expression[size + 1] != ' ' && !opr_check(expression[size + 1]) && (expression[size] == '-' || expression[size] == '+')))
 	{
 		size++;
 		count++;
@@ -276,6 +347,13 @@ string infixer(string expression)
 		{
 			if (!opr_check(expression[size]))
 			{
+				temp_str += expression[size];
+				stk.push(temp_str);
+			}
+			else if(isSigned && (expression[size] == '-' || expression[size] == '+') && expression[size+1] != ' ' && expression[size + 1] != '\0' && !opr_check(expression[size+1]))
+			{
+				temp_str += expression[size];
+				size++;
 				temp_str += expression[size];
 				stk.push(temp_str);
 			}
@@ -334,11 +412,6 @@ string remove_char(string str, char ch)
 	}
 	return final_str;
 }
-struct file_data
-{
-	string filename;
-	int priorty;
-};
 
 void replace_str(file_data F, string str, string str2)
 {
@@ -401,7 +474,7 @@ string tag_execute(string tag, string exp)
 		return num_to_str(obj_detection( remove_char( "C:\\Users\\Administrator\\source\\repos\\S-Zaib\\TXTCompiler\\TXTCompiler\\data" + correction(exp, 'i', 'I') + ".png", ' ')));
 }
 
-void parse_file(file_data F)
+file_data parse_file(file_data F)
 {
 	ifstream file;
 	file.open(F.filename);
@@ -496,4 +569,17 @@ void parse_file(file_data F)
 	while (!stk.isEmpty())
 		w_file << "\nSyntax Error: No Close tag of " << stk.pop() << " found!" << endl;
 	file.close();
+	return F;
 }
+
+//void LRU()
+//{
+//	string name = "../TXTCompiler/data/Test_files/Test-", ext = ".txt";
+//	int file_num = 7;
+//	file_data files[7], temp;
+//	for (int i = 0; i < 7; i++)
+//	{
+//		files[i].filename = name + char(i + 1 + '0') + ext;
+//		files[i].priorty = parse_file(files[i]).priorty;	
+//	}
+//}

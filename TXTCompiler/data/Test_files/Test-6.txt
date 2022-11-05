@@ -10,7 +10,7 @@
 	|paragraph|
 
 
-		Process this file Convert the given Infix expressions to postfix expression using standard algorithm. |post_exp| A – B + C $ D $ E - F * G / H |\post_exp| 
+		Process this file Convert the given Infix expressions to postfix expression using standard algorithm. |post_exp| A - B + C $ D $ E - F * G / H |\post_exp| 
                   and |post_exp| x ^ y / ( 5 * z ) + 2 |\post_exp| and |pre_exp| a + b * c + d |\pre_exp| .
 
                 Show your Coding skills and Dont use any built-in function for handling character array
