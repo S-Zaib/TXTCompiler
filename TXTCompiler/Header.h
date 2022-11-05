@@ -3,146 +3,13 @@
 #include <fstream>
 #include <cmath>
 #include <string>
+#include "Queue_Stack.h"
+#include "Image_extract.h"
 using namespace std;
 
-
-template <typename T>
-class Node
-{
-public:
-	T data;
-	Node<T>* next;
-	Node()
-	{
-		T data = 0;
-		next = NULL;
-	}
-	Node(T data)
-	{
-		this->data = data;
-		next = NULL;
-	}
-};
-template <typename T>
-class Stack
-{
-	Node<T>* top;
-public:
-	Stack()
-	{
-		top = NULL;
-	}
-	void push(T data)
-	{
-		if (!top)
-		{
-			top = new Node<T>(data);
-			return;
-		}
-		Node<T>* temp = new Node<T>(data);
-		temp->next = top;
-		top = temp;
-	}
-	T pop()
-	{
-		if (!top)
-		{
-			cout << "Error, Empty Stack!\n";
-			return 0;
-		}
-		Node<T>* temp = top;
-		top = top->next;
-		T temp_data = temp->data;
-		delete temp;
-		return temp_data;
-	}
-	T peek()
-	{
-		if (!top)
-		{
-			cout << "Error, Empty Stack!\n";
-			return 0;
-		}
-		return top->data;
-	}
-	bool isEmpty()
-	{
-		if (!top)
-			return true;
-		return false;
-	}
-	void print()
-	{
-		Node<T>* curr = top;
-		while (curr)
-		{
-			cout << curr->data << ' ';
-			curr = curr->next;
-		}
-	}
-};
-template <typename T>
-class Queue
-{
-	Node<T>* head;
-	Node<T>* tail;
-public:
-	Queue()
-	{
-		head = NULL;
-		tail = NULL;
-	}
-	void enqueue(T data)
-	{
-		if (!head)
-		{
-			head = new Node<T>(data);
-			tail = head;
-			return;
-		}
-		Node<T>* temp = new Node<T>(data);
-		tail->next = temp;
-		tail = temp;
-	}
-	T dequeue()
-	{
-		if (!head)
-		{
-			cout << "Error, Queue Empty!\n";
-			return 0;
-		}
-		Node<T>* temp = head;
-		head = head->next;
-		T temp_data = temp->data;
-		delete temp;
-		return temp_data;
-	}
-	T peek()
-	{
-		if (!head)
-		{
-			cout << "Error, Queue Empty!\n";
-			return 0;
-		}
-		return head->data;
-	}
-	bool isEmpty()
-	{
-		if (!head)
-			return true;
-		return false;
-	}
-	void print()
-	{
-		Node<T>* curr = head;
-		while (curr)
-		{
-			cout << curr->data << ' ';
-			curr = curr->next;
-		}
-	}
-};
-
+string infixer(string expression);
+string remove_spaces(string str);
+bool eval_or_exp(string expression);
 // + - * / ^ ( ) 
 bool prcd(char op1, char op2)
 {
@@ -210,6 +77,12 @@ string postfixer(string expression)
 	string ans = "";
 	int size = 0;
 	int brkt_count = 0;
+	string temp_exp = remove_spaces(expression);
+	while (!opr_check(temp_exp[size]) && temp_exp[size] != '\0')
+		size++;
+	if (size > 1)
+		return infixer(expression);
+	size = 0;
 	while (expression[size] != '\0')
 	{
 		if (expression[size] != ' ')
@@ -230,9 +103,9 @@ string postfixer(string expression)
 					brkt_count--;
 				}
 			}
-			while (expression[size + 1] == '\0' && !stk.isEmpty())
-				ans += stk.pop();
 		}
+		while (expression[size + 1] == '\0' && !stk.isEmpty())
+			ans += stk.pop();
 		size++;
 	} 
 	if(brkt_count != 0)
@@ -253,6 +126,20 @@ string reverse_str(string str)
 
 string prefixer(string expression)
 {
+	int size = 0, count = 0, opr_count = 0;
+	while (opr_check(expression[size]) && expression[size] != '\0')
+	{
+		opr_count++;
+		size++;
+	}
+	while (!opr_check(expression[size]) && expression[size] != '\0')
+	{
+		size++;
+		count++;
+	}
+	if (count > 1 && opr_count > 0)
+		return infixer(expression);
+	size = 0;
 	expression = reverse_str(expression);
 	for (int i = 0; expression[i] != '\0'; i++)
 	{
@@ -265,6 +152,26 @@ string prefixer(string expression)
 	if(temp != "Invalid Expression!")
 		return reverse_str(temp);
 	return temp;
+}
+
+string num_to_str(int n)
+{
+	string ans = "";
+	while (n)
+	{
+		ans += (n % 10) + '0';
+		n /= 10;
+	}
+	return reverse_str(ans);
+}
+
+int str_to_num(string str)
+{
+	int ans = 0;
+	for (int i = 0; str[i] != '\0'; i++)
+		if (str[i] != ' ')
+			ans = ans * 10 + (str[i] - '0');
+	return ans;
 }
 
 string eval_func(string num1, char opr, string num2)
@@ -298,12 +205,15 @@ string eval_func(string num1, char opr, string num2)
 		cout << "Wrong OPERATOR ;/";
 		return "";
 	}
-	while (n_ans)
-	{
-		ans += (n_ans % 10) + '0';
-		n_ans /= 10;
-	}
-	return reverse_str(ans);
+	return num_to_str(n_ans);
+}
+
+bool eval_or_exp(string expression)
+{
+	for (int i = 0; expression[i] != '\0'; i++)
+		if ((expression[i] >= 'a' && expression[i] <= 'z') || (expression[i] >= 'A' && expression[i] <= 'Z'))
+			return false;
+	return true;
 }
 
 string infixer(string expression)
@@ -311,18 +221,54 @@ string infixer(string expression)
 	if (expression == "Invalid Expression!")
 		return expression;
 	Stack<string> stk;
-	int size = 0;
+	int size = 0, count = 0;
 	string ans;
-	bool prefix = false, eval = true;
-	if (opr_check(expression[size]))
+	bool prefix = false, eval = eval_or_exp(expression);
+	if (!eval)
+		expression = remove_spaces(expression);
+	while (expression[size] != '\0')
+	{
+		if (!opr_check(expression[size]))
+			count++;
+		else if (expression[size] == '(' || expression[size] == ')')
+		{
+			cout << "already infix" << endl;
+			if (!eval)
+				return expression;
+			else
+				return infixer(postfixer(expression));
+		}
+		else
+			break;
+		size++;
+	}
+	if (count == 1)
+	{
+		cout << "already infix" << endl;
+		if (!eval)
+			return expression;
+		else
+			return infixer(postfixer(expression));
+	}
+	size = 0, count = 0;
+	int opr_count = 0;
+	while (opr_check(expression[size]) && expression[size] != '\0')
+	{
+		opr_count++;
+		size++;
+	}
+	while (!opr_check(expression[size]) && expression[size] != '\0')
+	{
+		size++;
+		count++;
+	}
+	if (count > 1 && opr_count > 0)
 	{
 		expression = reverse_str(expression);
 		prefix = true;
 	}
-	for (int i = 0; expression[i] != '\0'; i++)
-		if ((expression[i] >= 'a' && expression[i] <= 'z') || (expression[i] >= 'A' && expression[i] <= 'Z'))
-			eval = false;
 	
+	size = 0;
 	while (expression[size] != '\0')
 	{
 		string temp_str = "";
@@ -335,7 +281,11 @@ string infixer(string expression)
 			}
 			else
 			{
+				if (stk.isEmpty())
+					return "Invalid Expression!";
 				string num1 = stk.pop();
+				if (stk.isEmpty())
+					return "Invalid Expression!";
 				string num2 = stk.pop();
 				if (!eval)
 				{
@@ -372,46 +322,178 @@ string infixer(string expression)
 	return ans;
 }
 
-void read_file(string filename)
+string remove_char(string str, char ch)
 {
-	ifstream file;
-	file.open(filename);
-	string str;
-	bool start = false, head = false, postfix = false, prefix = false, infix = false;
-	Stack<string> stk;
-	while (getline(file, str))
+	string final_str = "";
+	int count = 0;
+	while(str[count] != '\0')
 	{
-		if (str == "|start|")
-			start = true;
-		else if (str == "|\\start|")
-			start = false;
-		if (start)
+		if (str[count] != ch)
+			final_str += str[count];
+		count++;
+	}
+	return final_str;
+}
+struct file_data
+{
+	string filename;
+	int priorty;
+};
+
+void replace_str(file_data F, string str, string str2)
+{
+	fstream file;
+	file.open(F.filename);
+	char ch;
+	string check = "";
+	while (!file.eof())
+	{
+		file.get(ch);
+		if (ch == str[0])
 		{
-			if (str == "|head|")
-				head = true;
-			else if (str == "|\\head|")
-				head = false;
-			else if (str == "|postfix|")
-				postfix = true;
-			else if (str == "|\\postfix|")
-				postfix = false;
-			else if (str == "|prefix|")
-				prefix = true;
-			else if (str == "|\\prefix|")
-				prefix = false;
-			else if (str == "|infix|")
-				infix = true;
-			else if (str == "|\\infix|")
-				infix = false;
-			else if (head)
-				cout << str << endl;
-			else if (postfix)
-				cout << postfixer(str) << endl;
-			else if (prefix)
-				cout << prefixer(str) << endl;
-			else if (infix)
-				cout << infixer(str) << endl;
+			int count = 0;
+			while (str[count] != '\0')
+			{
+				check += ch;
+				file.get(ch);
+				count++;
+			}
+			if (check == str)
+			{
+				file.seekp(-count, ios::cur);
+				file << str2;
+			}
+			check = "";
 		}
 	}
+}
+
+string correction(string str, char ch1, char ch2)
+{
+	int count = 0;
+	while (str[count] != '\0')
+	{
+		if (str[count] == ch1)
+			str[count] = ch2;
+		count++;
+	}
+	return str;
+}
+
+string remove_spaces(string str)
+{
+	string nospc = "";
+	for (int i = 0; str[i] != '\0'; i++)
+		if (str[i] != ' ')
+			nospc += str[i];
+	return nospc;
+}
+
+string tag_execute(string tag, string exp)
+{
+	if (tag == "|post_exp|")
+		return postfixer(exp);
+	else if (tag == "|pre_exp|")
+		return prefixer(exp);
+	else if (tag == "|sol_exp|")
+		return infixer(exp);
+	else if (tag == "|src|")
+		return num_to_str(obj_detection( remove_char( "C:\\Users\\Administrator\\source\\repos\\S-Zaib\\TXTCompiler\\TXTCompiler\\data" + correction(exp, 'i', 'I') + ".png", ' ')));
+}
+
+void parse_file(file_data F)
+{
+	ifstream file;
+	file.open(F.filename);
+	char ch;
+	int file_priority;
+	Stack<string> stk, stk2;
+	string tag_str = "";
+	file.get(ch);
+	while (!file.eof())
+	{
+		if (ch == '|')
+		{
+			if (tag_str != "")
+			{
+				//cout << "CONTENTO" << tag_str << endl;
+				stk.push(tag_str);
+				tag_str = "";
+			}
+			tag_str += ch;
+			do
+			{
+				file.get(ch);
+				tag_str += ch;
+			} while (ch != '|');
+			file.get(ch);
+			//cout << "tago: " << tag_str << endl;
+			stk.push(tag_str);
+			tag_str = "";
+		}
+		else
+		{
+			if (ch != '\t' && ch != '\n' && ch != '\r')
+				tag_str += ch;
+			file.get(ch);
+		}
+	}
+	while (!stk.isEmpty())
+		stk2.push(stk.pop());
+	ofstream w_file;
+	F.filename += "output.txt";
+	w_file.open(F.filename);
+	string store_exp = "";
+	bool store_mode = false;
+	while (!stk2.isEmpty())
+	{
+		string temp = stk2.pop();
+		if (temp[0] == '|' && temp[1] != '\\')
+		{
+			stk.push(temp);
+			if (temp == "|post_exp|" || temp == "|pre_exp|" || temp == "|sol_exp|" || temp == "|src|" || temp == "|priorty|")
+				store_mode = true;
+			else if (temp == "|head|" || temp == "|paragraph|")
+				w_file << '\n';
+		}
+		else if (temp[0] == '|' && temp[1] == '\\')
+		{
+			temp = remove_char(temp, '\\');
+			if (temp == "|post_exp|" || temp == "|pre_exp|" || temp == "|sol_exp|" || temp == "|src|" || temp == "|priorty|")
+			{
+				store_mode = false;
+				if (temp != "|priorty|")
+				{
+					cout << F.filename << endl;
+					cout << endl << endl << temp << " : " << store_exp << endl;
+					//string trmp = tag_execute(temp, remove_spaces(store_exp));
+					string trmp = tag_execute(temp, store_exp);
+					cout << trmp << endl << endl;
+					w_file << trmp << " ";
+
+				}
+				else
+					F.priorty = str_to_num(store_exp);
+			}
+			else if (temp == "|tab|")
+				w_file << '\t';
+			else if (temp == "|paragraph|" || temp == "|head|")
+				w_file << '\n';
+			if(!stk.remove(temp))
+				w_file << "\nSyntax Error: No Start tag of " << temp << " found!" << endl;
+		}
+		else
+		{
+			if (store_mode)
+				store_exp += temp;
+			else
+			{
+				store_exp = "";
+				w_file << temp;
+			}
+		}
+	}
+	while (!stk.isEmpty())
+		w_file << "\nSyntax Error: No Close tag of " << stk.pop() << " found!" << endl;
 	file.close();
 }

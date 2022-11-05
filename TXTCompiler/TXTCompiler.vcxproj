@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Header.h" />
     <ClInclude Include="Image_extract.h" />
+    <ClInclude Include="Queue_Stack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />

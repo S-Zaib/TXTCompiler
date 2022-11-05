@@ -1,5 +1,5 @@
 #pragma once
-#include "Header.h"
+#include "Queue_Stack.h"
 #include<opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 using namespace std;
@@ -14,8 +14,9 @@ bool obj_exist(float**& imgARR, int rows, int cols)
 	return false;
 }
 
-void obj_detection(string name)
+int obj_detection(string name, bool show_img = false)
 {
+	return 0;
 	Mat actual_image = imread(name, IMREAD_ANYCOLOR | IMREAD_ANYDEPTH);
 	const int rows = actual_image.rows, cols = actual_image.cols;
 	Queue<int> q;
@@ -132,7 +133,8 @@ void obj_detection(string name)
 					actual_image.at<Vec3b>(i, j)[1] = 0;
 					actual_image.at<Vec3b>(i, j)[2] = 0;
 				}
-		imshow("OG IMAGE", actual_image);
+		if(show_img)
+			imshow("OG IMAGE", actual_image);
 		for (int i = 0; i < rows; i++)
 			for (int j = 0; j < cols; j++)
 				if (imgARR2[i][j])
@@ -148,12 +150,14 @@ void obj_detection(string name)
 					actual_image.at<Vec3b>(i, j)[1] = 0;
 					actual_image.at<Vec3b>(i, j)[2] = 0;
 				}
-		imshow("OBJ IMAGE", actual_image);
+		if (show_img)
+			imshow("OBJ IMAGE", actual_image);
 		waitKey(0);
-		cout << "Object " << ++obj_count << endl;
+		//cout << "Object " << ++obj_count << endl;
 		obj_name = obj_num + char(obj_count + '0') + ext;
-		cout << "Object Name:" << obj_name<< endl;
+		//cout << "Object Name:" << obj_name<< endl;
 		imwrite(obj_name, actual_image);
 	}
-	cout << "\n 1 done \n";
+	//cout << "Done!" << endl;
+	return obj_count;
 }
