@@ -469,4 +469,12 @@ public:
 		cout << "LL" << endl;
 		LRU_Q.print();
 	}
+	int get_hits()
+	{
+		return hits;
+	}
+	int get_faults()
+	{
+		return faults;
+	}
 };

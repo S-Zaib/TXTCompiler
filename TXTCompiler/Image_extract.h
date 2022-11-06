@@ -14,9 +14,8 @@ bool obj_exist(float**& imgARR, int rows, int cols)
 	return false;
 }
 
-int obj_detection(string name, bool show_img = false)
+int obj_detection(string name, bool show_img = true)
 {
-	return 0;
 	Mat actual_image = imread(name, IMREAD_ANYCOLOR | IMREAD_ANYDEPTH);
 	const int rows = actual_image.rows, cols = actual_image.cols;
 	Queue<int> q;
@@ -41,6 +40,8 @@ int obj_detection(string name, bool show_img = false)
 				{
 					start_x = i;
 					start_y = j;
+					i = rows;
+					j = cols;
 					break;
 				}
 		q.enqueue(start_x);
@@ -153,11 +154,11 @@ int obj_detection(string name, bool show_img = false)
 		if (show_img)
 			imshow("OBJ IMAGE", actual_image);
 		waitKey(0);
-		//cout << "Object " << ++obj_count << endl;
+		cout << "Object " << ++obj_count << endl;
 		obj_name = obj_num + char(obj_count + '0') + ext;
-		//cout << "Object Name:" << obj_name<< endl;
+		cout << "Object Name:" << obj_name<< endl;
 		imwrite(obj_name, actual_image);
 	}
-	//cout << "Done!" << endl;
+	cout << "Done!" << endl;
 	return obj_count;
 }

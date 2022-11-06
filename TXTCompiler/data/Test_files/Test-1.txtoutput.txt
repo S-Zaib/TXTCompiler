@@ -3,5 +3,5 @@ First File.
 
 The file getting processed and the converted postfix notations are abc*+  and Invalid Expression! .One more statement to test your coding skills to handle the character arrya without using any builtin funciton, so show this expression in to prefix form -/*ab^+cdfg . The skill test doesn't stop there,you have to evaluate on more statement to prove your  skills on basic stack working. Evalaution result of provided strings are (a+(b*c)) .
 
- So,you said you enjoyed the previous assignment and learned much and more :). Now, tell me the about the number of galxies in the picture.Total galxies in picture are  . 
+ So,you said you enjoyed the previous assignment and learned much and more :). Now, tell me the about the number of galxies in the picture.Total galxies in picture are 3 . 
 this is just check your stack handling skills.  so i hope you will pass  this test alsoso keep going . So, now I am  tried of this thing.  I think that's enough.

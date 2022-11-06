@@ -70,7 +70,6 @@ bool opr_check(char x)
 		return true;
 	return false;
 }
-
 bool signed_exp(string expression)
 {
 	int count = 0, size = 0;
@@ -471,7 +470,7 @@ string tag_execute(string tag, string exp)
 	else if (tag == "|sol_exp|")
 		return infixer(exp);
 	else if (tag == "|src|")
-		return num_to_str(obj_detection( remove_char( "C:\\Users\\Administrator\\source\\repos\\S-Zaib\\TXTCompiler\\TXTCompiler\\data" + correction(exp, 'i', 'I') + ".png", ' ')));
+		return num_to_str(obj_detection( remove_char( "../TXTCompiler/data" + correction(exp, 'i', 'I') + ".png", ' ')));
 }
 
 file_data parse_file(file_data F)
@@ -489,7 +488,6 @@ file_data parse_file(file_data F)
 		{
 			if (tag_str != "")
 			{
-				//cout << "CONTENTO" << tag_str << endl;
 				stk.push(tag_str);
 				tag_str = "";
 			}
@@ -500,7 +498,6 @@ file_data parse_file(file_data F)
 				tag_str += ch;
 			} while (ch != '|');
 			file.get(ch);
-			//cout << "tago: " << tag_str << endl;
 			stk.push(tag_str);
 			tag_str = "";
 		}
@@ -537,11 +534,11 @@ file_data parse_file(file_data F)
 				store_mode = false;
 				if (temp != "|priorty|")
 				{
-					cout << F.filename << endl;
-					cout << endl << endl << temp << " : " << store_exp << endl;
+					//cout << F.filename << endl;
+					//cout << endl << endl << temp << " : " << store_exp << endl;
 					//string trmp = tag_execute(temp, remove_spaces(store_exp));
 					string trmp = tag_execute(temp, store_exp);
-					cout << trmp << endl << endl;
+					//cout << trmp << endl << endl;
 					w_file << trmp << " ";
 
 				}
@@ -569,17 +566,31 @@ file_data parse_file(file_data F)
 	while (!stk.isEmpty())
 		w_file << "\nSyntax Error: No Close tag of " << stk.pop() << " found!" << endl;
 	file.close();
+	w_file.close();
 	return F;
 }
 
-//void LRU()
-//{
-//	string name = "../TXTCompiler/data/Test_files/Test-", ext = ".txt";
-//	int file_num = 7;
-//	file_data files[7], temp;
-//	for (int i = 0; i < 7; i++)
-//	{
-//		files[i].filename = name + char(i + 1 + '0') + ext;
-//		files[i].priorty = parse_file(files[i]).priorty;	
-//	}
-//}
+void files_LRU()
+{
+	LRU lru(4);
+	string name = "../TXTCompiler/data/Test_files/Test-", ext = ".txt";
+	int file_num = 7;
+	file_data files[7], temp;
+	ofstream wfile;
+	wfile.open("../TXTCompiler/data/Output_files/Result-1.txt", ios::app);
+	for (int i = 0; i < 7; i++)
+	{
+		ifstream rfile;
+		files[i].filename = name + char(i + 1 + '0') + ext;
+		temp = parse_file(files[i]);
+		files[i].filename = temp.filename;
+		files[i].priorty = temp.priorty;
+		rfile.open(files[i].filename);
+		wfile << rfile.rdbuf();
+		lru.add(files[i]);
+		rfile.close();
+	}
+	wfile << '\n' << "LRU Results: Total Hits: " << lru.get_hits() << ", Total Faults: " << lru.get_faults() << '\n';
+	wfile.close();
+	lru.print();
+}
